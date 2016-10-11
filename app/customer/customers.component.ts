@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 // import { Observable } from 'rxjs/Rx';
 
-import { CustomerComponent } from './customer.component';
 import { CustomerService } from './customer.service';
 
 @Component({
   moduleId: module.id,
   selector: 'app-customers',
   templateUrl: 'customers.component.html',
-  directives: [CustomerComponent]
+  providers: [CustomerService]
 })
 export class CustomersComponent implements OnInit {
   // customers: Observable<any[]>;
@@ -43,9 +42,9 @@ export class CustomersComponent implements OnInit {
     // this.customers = this._customerService.getCustomers_RxObservable()
     //   .catch((err) => {
     //     console.log(err); // dont do this, show the user a nice message
-    //     return Observable.of(true);
+    //     return Observable.of([]);
     //     // now we eat it, but only if the
     //     // message has been communicated to the user
     //   });
-  }
+    }
 }

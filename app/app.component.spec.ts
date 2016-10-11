@@ -1,15 +1,9 @@
 /* tslint:disable:no-unused-variable */
 import { AppComponent } from './app.component';
 
-import {
-  expect, it, iit, xit,
-  describe, ddescribe, xdescribe,
-  beforeEach, beforeEachProviders, withProviders,
-  async, inject
-} from '@angular/core/testing';
+import { TestBed }      from '@angular/core/testing';
 
-import { TestComponentBuilder } from '@angular/compiler/testing';
-import { By }                   from '@angular/platform-browser';
+import { By }           from '@angular/platform-browser';
 
 ////////  SPECS  /////////////
 
@@ -20,53 +14,24 @@ describe('Smoke test', () => {
   });
 });
 
-describe('AppComponent with new', function () {
-    it('should instantiate component', () => {
-      expect(new AppComponent()).not.toBeNull('Whoopie!');
-    });
-});
-
 describe('AppComponent with TCB', function () {
+  beforeEach(() => {
+    TestBed.configureTestingModule({declarations: [AppComponent]});
+  });
 
-  it('should instantiate component',
-    async(inject([TestComponentBuilder], (tcb: TestComponentBuilder) => {
+  it('should instantiate component', () => {
+    let fixture = TestBed.createComponent(AppComponent);
+    expect(fixture.componentInstance instanceof AppComponent).toBe(true, 'should create AppComponent');
+  });
 
-    restoreOriginalAppComponent(tcb) // was `tcb`
-      .createAsync(AppComponent).then(fixture => {
-        expect(fixture.componentInstance instanceof AppComponent).toBe(true, 'should create AppComponent');
-      })
-      .catch(err => {
-        console.error(err);
-        throw(err);
-      });
-  })));
+  it('should have expected <h1> text', () => {
+    let fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
 
-  it('should have expected <h1> text',
-    async(inject([TestComponentBuilder], (tcb: TestComponentBuilder) => {
+    let h1 = fixture.debugElement.query(el => el.name === 'h1').nativeElement;  // it works
 
-      restoreOriginalAppComponent(tcb) // was `tcb`
-        .createAsync(AppComponent).then(fixture => {
-          // fixture.detectChanges();  // would need to resolve a binding but we don't have a binding
+        h1 = fixture.debugElement.query(By.css('h1')).nativeElement;            // preferred
 
-          let h1 = fixture.debugElement.query(el => el.name === 'h1').nativeElement;  // it works
-
-              h1 = fixture.debugElement.query(By.css('h1')).nativeElement;            // preferred
-
-          expect(h1.innerText).toMatch(/angular 2 app/i, '<h1> should say something about "Angular 2 App"');
-        });
-
-  })));
+    expect(h1.innerText).toMatch(/angular app/i, '<h1> should say something about "Angular App"');
+  });
 });
-
-/////////////////////////////////
-// Override the state of AppComponent to what it was when we first ran the tests.
-// This was before we added the customer feature which would break these tests
-// Todo: update the tests yourself!
-
-import { CustomerService } from './customer/index';
-
-function restoreOriginalAppComponent(tcb: TestComponentBuilder) {
-   return tcb
-    .overrideTemplate( AppComponent, '<h1>My First Angular 2 App</h1>')
-    .overrideProviders(AppComponent, [{ provide: CustomerService, useValue: {} }]);
-}
